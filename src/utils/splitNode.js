@@ -1,3 +1,7 @@
+import GraphemeSplitter from 'grapheme-splitter';
+
+const splitter = new GraphemeSplitter();
+
 /**
  * Splits the text of the provided element into its individual chars, wrapping
  * each with an instance of the provided wrapper element.
@@ -12,26 +16,11 @@ export default (node, wrapper = 'span') => {
 
   const trimmedText = node.innerText.trim();
 
-  const chars = [];
-  // eslint-disable-next-line
-  for (const char of trimmedText) {
-    if (char.charCodeAt(0) === 65039) {
-      chars[chars.length - 1] += char;
-    } else {
-      chars.push(char);
-    }
-  }
-
-  const elements = [];
-
-  // eslint-disable-next-line
-  for (const char of chars) {
+  return splitter.splitGraphemes(trimmedText).map(char => {
     const parent = wrapperElement.cloneNode();
 
     parent.insertAdjacentHTML('afterbegin', char === ' ' ? '&nbsp;' : char);
 
-    elements.push(parent);
-  }
-
-  return elements;
+    return parent;
+  });
 };
